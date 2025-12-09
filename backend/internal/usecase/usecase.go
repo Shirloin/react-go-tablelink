@@ -5,11 +5,15 @@ import (
 )
 
 type Usecases struct {
-	IngredientUsecase IngredientUsecase
+	IngredientUsecase     IngredientUsecase
+	ItemUsecase           ItemUsecase
+	ItemIngredientUsecase ItemIngredientUsecase
 }
 
 func InitUsecases(repositories *repository.Repositories) *Usecases {
 	return &Usecases{
-		IngredientUsecase: *NewIngredientUsecase(repositories.IngredientRepository),
+		IngredientUsecase:     *NewIngredientUsecase(repositories.IngredientRepository),
+		ItemUsecase:           *NewItemUsecase(repositories.ItemRepository),
+		ItemIngredientUsecase: *NewItemIngredientUsecase(repositories.ItemIngredientRepository),
 	}
 }

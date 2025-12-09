@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"context"
 	"time"
 
 	"github.com/google/uuid"
@@ -24,4 +25,21 @@ type Item struct {
 // TableName specifies the table name for GORM
 func (Item) TableName() string {
 	return "tm_item"
+}
+
+type ItemRepository interface {
+	GetAll(ctx context.Context, limit int, offset int) ([]Item, *Pagination, error)
+	GetByUUID(ctx context.Context, uuid string) (Item, error)
+	Create(ctx context.Context, item Item) (Item, error)
+	Update(ctx context.Context, uuid string, item Item) (Item, error)
+	Delete(ctx context.Context, uuid string) error
+	CheckNameExists(ctx context.Context, name string, excludeUUID string) (bool, error)
+}
+
+type ItemUsecase interface {
+	GetAll(ctx context.Context, limit int, offset int) ([]Item, *Pagination, error)
+	GetByUUID(ctx context.Context, uuid string) (Item, error)
+	Create(ctx context.Context, item Item) (Item, error)
+	Update(ctx context.Context, uuid string, item Item) (Item, error)
+	Delete(ctx context.Context, uuid string) error
 }

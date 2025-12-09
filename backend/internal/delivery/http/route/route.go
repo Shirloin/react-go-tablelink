@@ -15,6 +15,7 @@ func (c *RouteConfig) Setup() {
 		return c.Next()
 	})
 	setUpIngredientRoutes(api.Group("/ingredients"), &c.Handlers.IngredientHandler)
+	setUpItemRoutes(api.Group("/items"), &c.Handlers.ItemHandler)
 }
 
 func setUpIngredientRoutes(app fiber.Router, handler *handler.IngredientHandler) {
@@ -22,4 +23,14 @@ func setUpIngredientRoutes(app fiber.Router, handler *handler.IngredientHandler)
 	app.Post("/", handler.Create)
 	app.Put("/:uuid", handler.Update)
 	app.Delete("/:uuid", handler.Delete)
+}
+
+func setUpItemRoutes(app fiber.Router, handler *handler.ItemHandler) {
+	app.Get("/", handler.GetAll)
+	app.Get("/:uuid", handler.GetByUUID)
+	app.Post("/", handler.Create)
+	app.Put("/:uuid", handler.Update)
+	app.Delete("/:uuid", handler.Delete)
+	app.Post("/:uuid/ingredients", handler.AddIngredient)
+	app.Delete("/:uuid/ingredients/:ingredient_uuid", handler.RemoveIngredient)
 }

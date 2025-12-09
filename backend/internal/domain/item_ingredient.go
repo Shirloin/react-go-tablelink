@@ -1,6 +1,8 @@
 package domain
 
 import (
+	"context"
+
 	"github.com/google/uuid"
 )
 
@@ -19,3 +21,14 @@ func (ItemIngredient) TableName() string {
 	return "tm_item_ingredient"
 }
 
+type ItemIngredientRepository interface {
+	Add(ctx context.Context, uuidItem string, uuidIngredient string) error
+	Delete(ctx context.Context, uuidItem string, uuidIngredient string) error
+	GetByItemUUID(ctx context.Context, uuidItem string) ([]ItemIngredient, error)
+}
+
+type ItemIngredientUsecase interface {
+	Add(ctx context.Context, uuidItem string, uuidIngredient string) error
+	Delete(ctx context.Context, uuidItem string, uuidIngredient string) error
+	GetByItemUUID(ctx context.Context, uuidItem string) ([]ItemIngredient, error)
+}

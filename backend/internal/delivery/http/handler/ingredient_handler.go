@@ -43,9 +43,12 @@ func (h *IngredientHandler) Create(c *fiber.Ctx) error {
 	}
 	ingredient, err := h.ingredientUsecase.Create(c.Context(), ingredient)
 	if err != nil {
-		return response.Error(c, fiber.StatusInternalServerError, err.Error())
+		if err.Error() == "ingredient name already exists" {
+			return response.Error(c, fiber.StatusConflict, err.Error())
+		}
+		return response.Error(c, fiber.StatusBadRequest, err.Error())
 	}
-	return response.Success(c, fiber.StatusOK, "Ingredient created successfully", ingredient)
+	return response.Success(c, fiber.StatusCreated, "Ingredient created successfully", ingredient)
 }
 
 func (h *IngredientHandler) Update(c *fiber.Ctx) error {
@@ -59,7 +62,10 @@ func (h *IngredientHandler) Update(c *fiber.Ctx) error {
 	}
 	ingredient, err := h.ingredientUsecase.Update(c.Context(), uuid, ingredient)
 	if err != nil {
-		return response.Error(c, fiber.StatusInternalServerError, err.Error())
+		if err.Error() == "ingredient name already exists" {
+			return response.Error(c, fiber.StatusConflict, err.Error())
+		}
+		return response.Error(c, fiber.StatusBadRequest, err.Error())
 	}
 	return response.Success(c, fiber.StatusOK, "Ingredient updated successfully", ingredient)
 }

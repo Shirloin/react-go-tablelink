@@ -6,10 +6,12 @@ import (
 
 type Handler struct {
 	IngredientHandler IngredientHandler
+	ItemHandler       ItemHandler
 }
 
 func InitHandlers(usecases *usecase.Usecases) *Handler {
 	return &Handler{
 		IngredientHandler: *NewIngredientHandler(usecases.IngredientUsecase),
+		ItemHandler:       *NewItemHandler(usecases.ItemUsecase),
 	}
 }

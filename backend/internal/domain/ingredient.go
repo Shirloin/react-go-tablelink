@@ -26,15 +26,18 @@ func (Ingredient) TableName() string {
 }
 
 type IngredientRepository interface {
-	GetAll(ctx context.Context, limit int, offset int) ([]Ingredient, error)
+	GetAll(ctx context.Context, limit int, offset int) ([]Ingredient, *Pagination, error)
+	GetByUUID(ctx context.Context, uuid string) (Ingredient, error)
 	Create(ctx context.Context, ingredient Ingredient) (Ingredient, error)
-	Update(ctx context.Context, ingredient Ingredient) (Ingredient, error)
-	Delete(ctx context.Context, id string) error
+	Update(ctx context.Context, uuid string, ingredient Ingredient) (Ingredient, error)
+	Delete(ctx context.Context, uuid string) error
+	CheckNameExists(ctx context.Context, name string, excludeUUID string) (bool, error)
 }
 
 type IngredientUsecase interface {
-	GetAll(ctx context.Context, limit int, offset int) ([]Ingredient, error)
+	GetAll(ctx context.Context, limit int, offset int) ([]Ingredient, *Pagination, error)
+	GetByUUID(ctx context.Context, uuid string) (Ingredient, error)
 	Create(ctx context.Context, ingredient Ingredient) (Ingredient, error)
-	Update(ctx context.Context, ingredient Ingredient) (Ingredient, error)
-	Delete(ctx context.Context, id string) error
+	Update(ctx context.Context, uuid string, ingredient Ingredient) (Ingredient, error)
+	Delete(ctx context.Context, uuid string) error
 }

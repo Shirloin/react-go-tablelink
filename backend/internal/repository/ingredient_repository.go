@@ -26,7 +26,8 @@ func (r *IngredientRepository) GetAll(ctx context.Context, limit int, offset int
 		return nil, nil, err
 	}
 
-	query := `SELECT * FROM tm_ingredient WHERE deleted_at IS NULL LIMIT $1 OFFSET $2`
+	query := `SELECT uuid, name, cause_alergy, type, status, created_at, updated_at, deleted_at
+	          FROM tm_ingredient WHERE deleted_at IS NULL ORDER BY created_at DESC LIMIT $1 OFFSET $2`
 	rows, err := r.pool.Query(ctx, query, limit, offset)
 	if err != nil {
 		return nil, nil, err
@@ -41,12 +42,17 @@ func (r *IngredientRepository) GetAll(ctx context.Context, limit int, offset int
 		}
 		ingredients = append(ingredients, ingredient)
 	}
+
 	totalPages := (totalItems + limit - 1) / limit
+	if totalPages == 0 {
+		totalPages = 1
+	}
+	page := offset / limit
 
 	pagination := domain.Pagination{
 		TotalItems: totalItems,
 		TotalPages: totalPages,
-		Page:       offset,
+		Page:       page,
 		Limit:      limit,
 	}
 
@@ -105,6 +111,44 @@ func (r *IngredientRepository) Update(ctx context.Context, uuid string, ingredie
 		return domain.Ingredient{}, err
 	}
 	return result, nil
+}
+
+func (r *IngredientRepository) GetByUUID(ctx context.Context, uuid string) (domain.Ingredient, error) {
+	query := `SELECT uuid, name, cause_alergy, type, status, created_at, updated_at, deleted_at
+	          FROM tm_ingredient WHERE uuid = $1 AND deleted_at IS NULL`
+
+	var ingredient domain.Ingredient
+	err := r.pool.QueryRow(ctx, query, uuid).Scan(
+		&ingredient.UUID,
+		&ingredient.Name,
+		&ingredient.CauseAlergy,
+		&ingredient.Type,
+		&ingredient.Status,
+		&ingredient.CreatedAt,
+		&ingredient.UpdatedAt,
+		&ingredient.DeletedAt,
+	)
+	if err != nil {
+		return domain.Ingredient{}, err
+	}
+	return ingredient, nil
+}
+
+func (r *IngredientRepository) CheckNameExists(ctx context.Context, name string, excludeUUID string) (bool, error) {
+	var count int
+	query := `SELECT COUNT(*) FROM tm_ingredient WHERE name = $1 AND deleted_at IS NULL`
+	args := []interface{}{name}
+
+	if excludeUUID != "" {
+		query += ` AND uuid != $2`
+		args = append(args, excludeUUID)
+	}
+
+	err := r.pool.QueryRow(ctx, query, args...).Scan(&count)
+	if err != nil {
+		return false, err
+	}
+	return count > 0, nil
 }
 
 func (r *IngredientRepository) Delete(ctx context.Context, uuid string) error {
