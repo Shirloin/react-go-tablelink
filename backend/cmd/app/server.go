@@ -2,15 +2,15 @@ package main
 
 import (
 	"log"
-	"net"
+	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/improbable-eng/grpc-web/go/grpcweb"
 	"github.com/shirloin/react-go-prac/internal/config"
 	"github.com/shirloin/react-go-prac/internal/database"
-	"google.golang.org/grpc"
 )
 
 func main() {
@@ -34,18 +34,18 @@ func main() {
 
 	config.Bootstrap(&bootstrapConfig)
 
+	wrappedGrpc := grpcweb.WrapServer(grpcServer,
+		grpcweb.WithOriginFunc(func(origin string) bool {
+			return true
+		}),
+	)
+
 	go startHTTPServer(cfg.PORT, app)
-	go startGRPCServer(cfg.GRPC_PORT, grpcServer)
+	go startGRPCServer(cfg.GRPC_PORT, wrappedGrpc)
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
-
-	log.Println("Shutting down server...")
-	grpcServer.GracefulStop()
-	if err := app.Shutdown(); err != nil {
-		log.Fatalf("Server forced to shutdown: %v", err)
-	}
 }
 
 func startHTTPServer(port string, app *fiber.App) {
@@ -55,13 +55,14 @@ func startHTTPServer(port string, app *fiber.App) {
 	}
 }
 
-func startGRPCServer(port string, grpcServer *grpc.Server) {
-	lis, err := net.Listen("tcp", port)
-	if err != nil {
-		log.Fatalf("Failed to listen on %s: %v", port, err)
+func startGRPCServer(port string, wrappedGrpc *grpcweb.WrappedGrpcServer) {
+	server := &http.Server{
+		Addr:    port,
+		Handler: wrappedGrpc,
 	}
-	log.Printf("gRPC Server is running on port %s", port)
-	if err := grpcServer.Serve(lis); err != nil {
-		log.Fatalf("Failed to serve gRPC server: %v", err)
+
+	log.Printf("gRPC-Web server running on %s", port)
+	if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		log.Fatalf("gRPC-Web server error: %v", err)
 	}
 }

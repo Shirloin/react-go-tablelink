@@ -8,10 +8,12 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "proto": "protoc -I=proto/* --plugin=node_modules/@protobuf-ts/plugin/bin/protoc-gen-ts.js --ts_out=./src/proto/* --ts_opt=client_grpc1_web,generate_dependencies *.proto"
+    "proto": "protoc -I=proto/item_ingredient --plugin=node_modules/@protobuf-ts/plugin/bin/protoc-gen-ts.js --ts_out=./src/proto/item_ingredient --ts_opt=generate_dependencies item_ingredient.proto"
   },
   "dependencies": {
+    "@grpc/grpc-js": "^1.14.2",
     "@hookform/resolvers": "^5.2.2",
+    "@protobuf-ts/grpc-transport": "^2.11.1",
     "@protobuf-ts/grpcweb-transport": "^2.11.1",
     "@protobuf-ts/runtime": "^2.11.1",
     "@protobuf-ts/runtime-rpc": "^2.11.1",

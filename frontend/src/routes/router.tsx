@@ -1,8 +1,8 @@
-import Layout from "@/layouts/layout";
+import Layout from "@/components/layouts/layout";
 import { createBrowserRouter } from "react-router-dom";
-import IngredientManagementPage from "@/pages/ingredient-page";
-import ItemManagementPage from "@/pages/item-page";
-import ItemIngredientPage from "@/pages/item-ingredient-page";
+import IngredientManagementPage from "@/presentation/pages/ingredient-page";
+import ItemManagementPage from "@/presentation/pages/item-page";
+import ItemIngredientPage from "@/presentation/pages/item-ingredient-page";
 
 const router = createBrowserRouter([
   {

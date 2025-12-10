@@ -5,9 +5,10 @@ import (
 )
 
 type Config struct {
-	DATABASE_URL string
-	PORT         string
-	GRPC_PORT    string
+	DATABASE_URL  string
+	PORT          string
+	GRPC_PORT     string
+	GRPC_WEB_PORT string
 }
 
 var AppConfig *Config
@@ -15,9 +16,10 @@ var AppConfig *Config
 func Load() *Config {
 	if AppConfig == nil {
 		AppConfig = &Config{
-			DATABASE_URL: getEnv("DATABASE_URL", "postgres://postgres:postgres@localhost:5432/react-go-prac"),
-			PORT:         getEnv("PORT", ":7788"),
-			GRPC_PORT:    getEnv("GRPC_PORT", ":50051"),
+			DATABASE_URL:  getEnv("DATABASE_URL", "postgres://postgres:postgres@localhost:5432/react-go-prac"),
+			PORT:          getEnv("PORT", ":7788"),
+			GRPC_PORT:     getEnv("GRPC_PORT", ":50051"),
+			GRPC_WEB_PORT: getEnv("GRPC_WEB_PORT", ":8080"),
 		}
 	}
 	return AppConfig

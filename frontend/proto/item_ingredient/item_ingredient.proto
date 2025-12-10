@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package item_ingredient;
+
+option go_package = "github.com/shirloin/react-go-prac/proto/item_ingredient";
+
+// ItemIngredientService handles item-ingredient relationships
+service ItemIngredientService {
+  // Add an ingredient to an item
+  rpc AddItemIngredient(AddItemIngredientRequest) returns (AddItemIngredientResponse);
+
+  // Remove an ingredient from an item
+  rpc DeleteItemIngredient(DeleteItemIngredientRequest) returns (DeleteItemIngredientResponse);
+
+  // Get all ingredients for an item
+  rpc GetItemIngredients(GetItemIngredientsRequest) returns (GetItemIngredientsResponse);
+}
+
+message AddItemIngredientRequest {
+  string uuid_item = 1;
+  string uuid_ingredient = 2;
+}
+
+message AddItemIngredientResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message DeleteItemIngredientRequest {
+  string uuid_item = 1;
+  string uuid_ingredient = 2;
+}
+
+message DeleteItemIngredientResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message GetItemIngredientsRequest {
+  string uuid_item = 1;
+}
+
+message ItemIngredient {
+  string uuid_item = 1;
+  string uuid_ingredient = 2;
+}
+
+message GetItemIngredientsResponse {
+  bool success = 1;
+  string message = 2;
+  repeated ItemIngredient item_ingredients = 3;
+}
+

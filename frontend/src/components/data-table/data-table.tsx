@@ -13,7 +13,7 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/table";
-import { cn } from "@/lib/utils";
+import { cn } from "@/shared/utils/utils";
 import DataTablePagination from "./data-table-pagination";
 
 interface DataTableProps<TData> extends HTMLAttributes<HTMLDivElement> {
